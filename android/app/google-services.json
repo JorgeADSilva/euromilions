@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "158960183601",
+    "project_id": "euromilions-b145a",
+    "storage_bucket": "euromilions-b145a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:158960183601:android:4ab46d9746a6da8b87e810",
+        "android_client_info": {
+          "package_name": "com.example.euromilions"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDf6q2-gQyExkB5saoQLlV4TYhIPpwZoL4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
