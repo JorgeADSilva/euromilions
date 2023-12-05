@@ -116,10 +116,12 @@ class _ExtractionsContentState extends State<ExtractionsContent> {
                         .doc("extractions")
                         .set(extractionsList.toJson())
                         // ignore: avoid_print
-                        .then((value) => widget.userList.users.clear())
+                        .then((value) => widget.userList
+                            .validateUserNumbers(extractionsList))
                         // ignore: avoid_print
-                        .catchError(
-                            (error) => kDebugMode ? print("Failed to add user: $error") : {});
+                        .catchError((error) => kDebugMode
+                            ? print("Failed to add user: $error")
+                            : {});
                     // ignore: use_build_context_synchronously
                     Navigator.pop(context);
                   })
