@@ -32,64 +32,119 @@ class _UsersContentState extends State<UsersContent> {
 
     return Column(
       children: [
-        if (kDebugMode) 
+        if (kDebugMode)
           FloatingActionButton(
             onPressed: () async {
               await _showDialog(widget.userList, context);
             },
           ),
         Expanded(
-          child: SingleChildScrollView(
-            child: StreamBuilder<Map<String, dynamic>>(
+          child: StreamBuilder<Map<String, dynamic>>(
               stream: widget.firestoreReader
                   .streamDataFromFirestore('euromilions', 'v1'),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
+                  return Column(
+                    children: const [
+                      SizedBox(
+                        width: 50,
+                        height: 50,
+                        child: CircularProgressIndicator(),
+                      ),
+                    ],
+                  );
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else {
-                  widget.userList.users =
-                      UserList.fromJson(snapshot.data as Map<String, dynamic>)
-                          .users;
-                  for (var user in widget.userList.users) {
-                    usersWidgetList.add(
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(user.name),
-                            Responsive(
-                              mobile: NumberCardGridView(
-                                crossAxisCount: 10,
-                                childAspectRatio: 1,
-                                numbers: user.numbers,
-                              ),
-                              tablet: NumberCardGridView(
-                                crossAxisCount: 10,
-                                childAspectRatio: 1,
-                                numbers: user.numbers,
-                              ),
-                              desktop: NumberCardGridView(
-                                childAspectRatio: size.width < 1400 ? 1.1 : 1.4,
-                                crossAxisCount: 10,
-                                numbers: user.numbers,
-                              ),
-                            ),
-                          ],
-                        ),
+                  return Column(
+                    children: [
+                      verifyWinners(snapshot),
+                      Expanded(
+                        child: SingleChildScrollView(
+                            child: createUserTiles(usersWidgetList, size)),
                       ),
-                    );
-                  }
-                  return Column(children: usersWidgetList);
+                    ],
+                  );
                 }
-              },
-            ),
-          ),
+              }),
         ),
       ],
     );
+  }
+
+  Column createUserTiles(List<Widget> usersWidgetList, Size size) {
+    for (var user in widget.userList.users) {
+      usersWidgetList.add(
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(user.name),
+              Responsive(
+                mobile: NumberCardGridView(
+                  crossAxisCount: 10,
+                  childAspectRatio: 1,
+                  numbers: user.numbers,
+                ),
+                tablet: NumberCardGridView(
+                  crossAxisCount: 10,
+                  childAspectRatio: 1,
+                  numbers: user.numbers,
+                ),
+                desktop: NumberCardGridView(
+                  childAspectRatio: size.width < 1400 ? 1.1 : 1.4,
+                  crossAxisCount: 10,
+                  numbers: user.numbers,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    return Column(children: [...usersWidgetList]);
+  }
+
+  Container verifyWinners(
+    AsyncSnapshot<Map<String, dynamic>> snapshot,
+  ) {
+    widget.userList.users =
+        UserList.fromJson(snapshot.data as Map<String, dynamic>).users;
+    List<Widget> widgets = [
+      const Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Text(
+          "Vencedores",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+      ),
+    ];
+    List<User> winners = widget.userList.verifyWinners();
+
+    for (var item in winners) {
+      widgets.add(
+        ListTile(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(item.name),
+              Text(
+                " - ${((widget.userList.users.length * 10) / winners.length) * 0.8}",
+                style: const TextStyle(fontSize: 18.0),
+              ),
+              const Icon(Icons.euro),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Container(
+        color: Colors.green,
+        child: Column(
+          children: widgets,
+        ));
   }
 
   _showDialog(

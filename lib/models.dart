@@ -58,12 +58,11 @@ class Number {
     return value.toString();
   }
 
-  
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is Number && other.value ==value;
+    return other is Number && other.value == value;
   }
 
   @override
@@ -97,6 +96,20 @@ class UserList {
         }
       }
     }
+  }
+
+  List<User> verifyWinners() {
+    List<User> winnersList = [];
+    for (var user in users) {
+      bool allValidated = true;
+      for (var number in user.numbers) {
+        if (!number.validated) {
+          allValidated = false;
+        }
+      }
+      if (allValidated) winnersList.add(user);
+    }
+    return winnersList;
   }
 }
 
