@@ -111,40 +111,43 @@ class _UsersContentState extends State<UsersContent> {
   ) {
     widget.userList.users =
         UserList.fromJson(snapshot.data as Map<String, dynamic>).users;
-    List<Widget> widgets = [
-      const Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Text(
-          "Vencedores",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-      ),
-    ];
+    List<Widget> widgets = [];
     List<User> winners = widget.userList.verifyWinners();
-
-    for (var item in winners) {
+    if (winners.isNotEmpty) {
       widgets.add(
-        ListTile(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(item.name),
-              Text(
-                " - ${((widget.userList.users.length * 10) / winners.length) * 0.8}",
-                style: const TextStyle(fontSize: 18.0),
-              ),
-              const Icon(Icons.euro),
-            ],
+        const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Text(
+            "Vencedores",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ),
       );
+      for (var item in winners) {
+        widgets.add(
+          ListTile(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(item.name),
+                Text(
+                  " - ${((widget.userList.users.length * 10) / winners.length) * 0.8}",
+                  style: const TextStyle(fontSize: 18.0),
+                ),
+                const Icon(Icons.euro),
+              ],
+            ),
+          ),
+        );
+      }
+      return Container(
+          color: Colors.green,
+          child: Column(
+            children: widgets,
+          ));
+    } else {
+      return Container();
     }
-
-    return Container(
-        color: Colors.green,
-        child: Column(
-          children: widgets,
-        ));
   }
 
   _showDialog(
@@ -157,7 +160,7 @@ class _UsersContentState extends State<UsersContent> {
         TextEditingController();
     final TextEditingController numbersTextFieldController =
         TextEditingController();
-
+    paymentTextFieldController.text = "Nuno";
     await showDialog<String>(
         context: context,
         builder: (BuildContext context) {
